@@ -1,23 +1,20 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+
 
 //My imports
-import { useLocalSearchParams } from 'expo-router';
+import {Button, StyleSheet } from 'react-native';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+
 
 export default function TabTwoScreen() {
+    const router = useRouter();
     const { customerId, name } = useLocalSearchParams();
+
+
     return (
-        <ThemedView>
+        <ThemedView style={styles.container} >
             <ThemedText>
                 Welcome {name}
             </ThemedText>
@@ -25,13 +22,26 @@ export default function TabTwoScreen() {
             <ThemedText>
                 Customer ID: {customerId}
             </ThemedText>
+
+            <Button
+                title="Go to Login"
+                onPress={() => {
+                    router.push({
+                        pathname: "/login",
+                    });
+                }}
+            />
         </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
+  text: {
+    textAlign: 'center'
+  }
 });
