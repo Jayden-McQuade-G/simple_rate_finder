@@ -1,12 +1,12 @@
 import { Platform } from 'react-native';
 
-
+// Stores server side URL, if running in adroid studio will use the first address or use local host.
 const BASE_URL =
     Platform.OS === 'android'
         ? 'http://10.0.2.2:5186'
         : 'http://localhost:5186';
 
-
+//Requests all customers from backend
 export async function GetAllCustomers() {
     try {
         const response = await fetch(`${BASE_URL}/all-customers`, {
@@ -15,7 +15,6 @@ export async function GetAllCustomers() {
                 Accept: 'application/json',
             },
         });
-
         return await response.json();
     } catch (error) {
         console.error(error);
@@ -23,7 +22,7 @@ export async function GetAllCustomers() {
     }
 }
 
-
+//Request all accounts for a given customer
 export async function GetCustomerAccounts(customerId: number) {
     try {
         const response = await fetch(
@@ -43,7 +42,7 @@ export async function GetCustomerAccounts(customerId: number) {
     }
 }
 
-
+//Requests the savings account with the highest interest rate
 export async function GetBestSavingsAccount() {
     try {
         const response = await fetch(`${BASE_URL}/best-savings-account`, {
@@ -60,7 +59,7 @@ export async function GetBestSavingsAccount() {
     }
 }
 
-
+//posts two accounts and requests the server to return the best option
 export async function PostCompareRate(accountA: number, accountB: number) {
     try {
         const response = await fetch(`${BASE_URL}/compare-accounts`, {
@@ -82,7 +81,7 @@ export async function PostCompareRate(accountA: number, accountB: number) {
     }
 }
 
-
+//posts updated details for a given customer and requests the server to update the details in the database
 export async function PostUpdateAccount(account: {
     customerAccountId: number;
     marketAccountId: number;

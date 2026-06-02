@@ -1,9 +1,7 @@
 import * as Device from 'expo-device';
 import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-
-import { HintRow } from '@/components/hint-row';
+import { useState, useEffect } from 'react';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
@@ -11,6 +9,8 @@ import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
 import DropdownMenu, {MenuOption}  from '@/components/drop-down'
 
+import { GetAllCustomers } from '@/apis/apis'
+import { useRouter } from 'expo-router'; //Routing navigation instead of native tabs
 
 
 function getDevMenuHint() {
@@ -33,8 +33,24 @@ function getDevMenuHint() {
 }
 
 
+
 export default function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false)
+  type Customer = {
+    customerId: number;
+    name: string;
+  };
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    async function loadData() {
+      const data = await GetAllCustomers();
+      setCustomers(data);
+      console.log(data) //DEV LOGGING ***
+    };
+    loadData()
+  }, [])
 
   return (
     <ThemedView style={styles.container}>
@@ -43,9 +59,7 @@ export default function HomeScreen() {
           <ThemedText type="title" style={styles.title}>
             Simple Rate Finder
           </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
+          <ThemedText type="code" style={styles.code}>
           Select a user
         </ThemedText>
 
@@ -59,28 +73,32 @@ export default function HomeScreen() {
                 handleClose={() => setMenuVisible(false)}
                 trigger={
                     <ThemedText>
-                        Select User v
+                        Select User
                     </ThemedText>
                 }
             >
-                <MenuOption
-                    onSelect={() => {
-                        console.log("User 1");
-                        setMenuVisible(false);
-                    }}
-                >
-                    <ThemedText>User 1</ThemedText>
-                </MenuOption>
-
-                <MenuOption
-                    onSelect={() => {
-                        console.log("User 2");
-                        setMenuVisible(false);
-                    }}
-                >
-                    <ThemedText>User 2</ThemedText>
-                </MenuOption>
+            <>
+              {customers.map(customer => (
+                  <MenuOption
+                      key={customer.customerId}
+                      onSelect={() => {
+                          console.log(customer); //DEV LOGGING ***
+                          setMenuVisible(false);
+                          router.push({
+                            pathname: "/home",
+                            params: {
+                                customerId: customer.customerId,
+                                name: customer.name,
+                            },
+                          })
+                      }}
+                  >
+                      <ThemedText>{customer.name}</ThemedText>
+                  </MenuOption>
+              ))}
+            </>
             </DropdownMenu>
+        </ThemedView>
         </ThemedView>
         {Platform.OS === 'web' && <WebBadge />}
       </SafeAreaView>

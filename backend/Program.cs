@@ -15,7 +15,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection(); Unnecessary in dev
 
 //Hard coded db connection details
 string connectionString =
