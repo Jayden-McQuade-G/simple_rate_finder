@@ -131,7 +131,7 @@ app.MapGet("/all-customer-accounts", async () =>
         return Results.Problem($"General error: {ex.Message}");
     }
 })
-.WithName("customer-accounts");
+.WithName("all-customer-accounts");
 
 
 //Returns the savings account with the highest interest rate
