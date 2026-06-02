@@ -32,6 +32,7 @@ function getDevMenuHint() {
   );
 }
 
+
 export default function HomeScreen() {
   const [menuVisible, setMenuVisible] = useState(false)
 

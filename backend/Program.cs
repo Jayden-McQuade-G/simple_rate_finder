@@ -43,7 +43,7 @@ app.MapGet("/test-db", async () =>
 .WithName("test-db");
 
 //Retrieve all savings accounts for a specific user
-app.MapGet("/customer-account/{customerId:int}", async (int customerId) =>
+app.MapGet("/customer-accounts/{customerId:int}", async (int customerId) =>
 {
     try
     {
@@ -92,46 +92,30 @@ app.MapGet("/customer-account/{customerId:int}", async (int customerId) =>
 .WithName("customer-accounts");
 
 //Retrieve all savings accounts for a specific user
-app.MapGet("/all-customer-accounts", async () =>
+app.MapGet("/all-customers", async () =>
 {
-    try
+    await using var connection = new MySqlConnection(connectionString);
+    await connection.OpenAsync();
+
+    const string sql = "SELECT customer_id, name FROM customer";
+
+    await using var command = new MySqlCommand(sql, connection);
+    await using var reader = await command.ExecuteReaderAsync();
+
+    var customers = new List<object>();
+
+    while (await reader.ReadAsync())
     {
-        await using var connection = new MySqlConnection(connectionString);
-        await connection.OpenAsync();
-
-        const string sql = @"
-            SELECT *
-            FROM customer_account";
-
-        await using var command = new MySqlCommand(sql, connection);
-
-        await using var reader = await command.ExecuteReaderAsync();
-
-        var accounts = new List<object>();
-
-        while (await reader.ReadAsync())
+        customers.Add(new
         {
-            accounts.Add(new
-            {
-                customerId = reader.GetInt32(reader.GetOrdinal("customer_account_id")),
-                name = reader.GetInt32(reader.GetOrdinal("name")),
-            });
-        }
-        if (accounts.Count == 0)
-            return Results.NotFound("No accounts found.");
+            customerId = reader.GetInt32("customer_id"),
+            name = reader.GetString("name")
+        });
+    }
 
-        return Results.Ok(accounts);
-    }
-    catch (MySqlException ex)
-    {
-        return Results.Problem($"MySQL error: {ex.Message}");
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"General error: {ex.Message}");
-    }
+    return Results.Ok(customers);
 })
-.WithName("all-customer-accounts");
+.WithName("all-customers");
 
 
 //Returns the savings account with the highest interest rate
