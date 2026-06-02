@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "WH0f6DAe+aA=",
+  "dgSpecHash": "58FHJ+a9DyE=",
   "success": true,
   "projectFilePath": "C:\\Users\\Jayle\\Documents\\Simple_Rate_Finder\\simple_rate_finder\\backend\\backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jayle\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
-    "C:\\Users\\Jayle\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+    "C:\\Users\\Jayle\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\Jayle\\.nuget\\packages\\mysqlconnector\\2.5.0\\mysqlconnector.2.5.0.nupkg.sha512"
   ],
   "logs": []
 }
