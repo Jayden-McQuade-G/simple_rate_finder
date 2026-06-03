@@ -51,12 +51,19 @@ app.MapGet("/customer-accounts/{customerId:int}", async (int customerId) =>
         await connection.OpenAsync();
 
         const string sql = @"
-            SELECT *
-            FROM customer_account
-            WHERE customer_id = @customerId";
+            SELECT
+                ca.customer_account_id,
+                ca.account_name,
+                ca.balance,
+                ma.account_name  AS market_account_name,
+                ma.company_name,
+                ma.interest_rate
+            FROM customer_account ca
+            INNER JOIN market_account ma
+                ON ca.market_account_id = ma.market_account_id
+            WHERE ca.customer_id = @customerId";
 
         await using var command = new MySqlCommand(sql, connection);
-
         command.Parameters.AddWithValue("@customerId", customerId);
 
         await using var reader = await command.ExecuteReaderAsync();
@@ -68,11 +75,11 @@ app.MapGet("/customer-accounts/{customerId:int}", async (int customerId) =>
             accounts.Add(new
             {
                 customerAccountId = reader.GetInt32(reader.GetOrdinal("customer_account_id")),
-                marketAccountId = reader.GetInt32(reader.GetOrdinal("market_account_id")),
-                customerId = reader.GetInt32(reader.GetOrdinal("customer_id")),
-                accountName = reader.GetString(reader.GetOrdinal("account_name")),
-                balance = reader.GetDecimal(reader.GetOrdinal("balance")),
-                updatedAt = reader.GetDateTime(reader.GetOrdinal("updated_at"))
+                marketAccountName = reader.GetString(reader.GetOrdinal("market_account_name")),
+                companyName       = reader.GetString(reader.GetOrdinal("company_name")),
+                interestRate      = reader.GetDecimal(reader.GetOrdinal("interest_rate")),
+                accountName       = reader.GetString(reader.GetOrdinal("account_name")),
+                balance           = reader.GetDecimal(reader.GetOrdinal("balance")),
             });
         }
 
@@ -162,38 +169,7 @@ app.MapGet("/best-savings-account", async () =>
 })
 .WithName("best-savings-account");
 
-// Recieves 2 types of accounts and checks which one has a higher interest rate.
-app.MapPost("/compare-accounts", (CompareAccountsRequest request) =>
-{
-    try
-    {
-        var accountABetter = request.AccountAInterestRate > request.AccountBInterestRate;
-
-        var betterRate = accountABetter
-            ? request.AccountAInterestRate
-            : request.AccountBInterestRate;
-
-        var worseRate = accountABetter
-            ? request.AccountBInterestRate
-            : request.AccountAInterestRate;
-
-        var difference = betterRate - worseRate;
-
-        return Results.Ok(new
-        {
-            accountABetter,
-            difference,
-            betterRate
-        });
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem($"General error: {ex.Message}");
-    }
-})
-.WithName("compare-accounts");
-
-//Recieves the updated account details, and inserts them into the database.
+//Recieves the updated account details, and inserts them into the database. -- Not yet Used
 app.MapPost("/update-account", async (UpdateAccountRequest account) =>
 {
     try
