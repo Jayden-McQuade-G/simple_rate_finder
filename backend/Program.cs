@@ -70,6 +70,7 @@ app.MapGet("/customer-accounts/{customerId:int}", async (int customerId) =>
                 customerAccountId = reader.GetInt32(reader.GetOrdinal("customer_account_id")),
                 marketAccountId = reader.GetInt32(reader.GetOrdinal("market_account_id")),
                 customerId = reader.GetInt32(reader.GetOrdinal("customer_id")),
+                accountName = reader.GetString(reader.GetOrdinal("account_name")),
                 balance = reader.GetDecimal(reader.GetOrdinal("balance")),
                 updatedAt = reader.GetDateTime(reader.GetOrdinal("updated_at"))
             });

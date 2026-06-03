@@ -145,9 +145,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
   },
-
-  //Footer
-  footer: {
-    flex: 1,
-  },
 });
