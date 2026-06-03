@@ -27,7 +27,7 @@ export default function TabTwoScreen() {
                 title="Go to Login"
                 onPress={() => {
                     router.push({
-                        pathname: "/login",
+                        pathname: "/",
                     });
                 }}
             />
